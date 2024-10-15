@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, jsonify
 from flask import redirect, url_for, send_from_directory
+from flask import Flask, request, session
 import csv
 import random
 
@@ -7,6 +8,15 @@ app = Flask(__name__)
 
 # グローバル変数に受賞者データを保存
 saved_winners = []
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+
+@app.route('/save-confirmation-time', methods=['POST'])
+def save_confirmation_time():
+    data = request.json
+    session['confirm_time'] = data['confirmTime']  # セッションに保存
+    return {'status': 'success'}
 
 # CSVファイルの読み込み
 def load_csv_files():
@@ -77,12 +87,14 @@ def shuffle():
     # shuffle.html に結果を渡して表示
     return render_template('shuffle.html', winners=winners)
 
-# ページ番号なしでアクセスした場合に1ページ目にリダイレクト
 @app.route('/confirm', methods=['POST', 'GET'])
-def confirm_redirect():
-    return redirect(url_for('confirm', page_num=1))  # page_numを指定してリダイレクト
+def confirm():
+    page_num = request.args.get('page_num', None)
+    if page_num is None:
+        return redirect(url_for('confirm', page_num=1))
+    confirm_time = session.get('confirm_time', None)
+    return render_template('confirm.html', page_num=page_num, confirm_time=confirm_time)
 
-# ページ番号を指定して表示
 @app.route('/confirm/<int:page_num>', methods=['POST', 'GET'])
 def confirm(page_num=1):
     global saved_winners

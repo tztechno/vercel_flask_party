@@ -46,6 +46,31 @@
         }
     </style>
     <script>
+        // shuffleページでの確定ボタン処理
+        document.getElementById('confirmShuffleButton').addEventListener('click', function () {
+            const now = new Date();
+            const formattedTime = now.toISOString(); // サーバーに送るためISOフォーマットに変換
+
+            // 確定時刻をサーバーに送信
+            fetch('/save-confirmation-time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ confirmTime: formattedTime }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('サーバーに保存成功:', data);
+                })
+                .catch((error) => {
+                    console.error('エラー:', error);
+                });
+        });
+
+
+
+
         function populatePrizeFilter() {
             var rows = document.querySelectorAll('tbody tr');
             var prizes = new Set();
