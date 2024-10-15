@@ -1,0 +1,177 @@
+from flask import Flask, render_template, request, jsonify
+from flask import redirect, url_for, send_from_directory
+
+import pandas as pd
+import random
+
+app = Flask(__name__)
+
+# グローバル変数に受賞者データを保存
+saved_winners = []
+
+# CSVファイルの読み込み
+def load_csv_files():
+    try:
+        prize_df = pd.read_csv('sources/prize.csv')
+        guests_df = pd.read_csv('sources/guests.csv')
+        attend_df = pd.read_csv('sources/attend.csv')
+        return prize_df, guests_df, attend_df
+    except Exception as e:
+        print(f"Error loading CSV files: {e}")
+        return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()  # 空のデータフレームを返す
+    
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory('static', filename)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+# /shuffle ルート：シャッフル結果を表示
+@app.route('/shuffle')
+def shuffle():
+    global saved_winners  # 既存の受賞者データをリセット
+    saved_winners = []
+
+    # CSVファイルの読み込み
+    prize_df, guests_df, attend_df = load_csv_files()
+
+    # 賞のリストを作成
+    prizes = []
+    for _, row in prize_df.iterrows():
+        prizes.extend([row['prize']] * int(row['n']))
+
+    # 参加者のIDリストをシャッフル
+    attendid = attend_df['id'].tolist()
+    random.shuffle(attendid)
+
+    # シャッフル結果に基づいて受賞者を選出
+    winners = []
+    for i in range(len(prizes)):
+        idi = attendid[i]
+        attendee = guests_df[guests_df['id'] == idi]
+        
+        # 該当する参加者がいない場合はスキップ
+        if attendee.empty:
+            continue
+        
+        winner = {
+            'prize': prizes[i],
+            'id': attendee.iloc[0, 0],
+            'comp': attendee.iloc[0, 1],
+            'name': attendee.iloc[0, 2],
+        }
+        winners.append(winner)
+        saved_winners.append(winner)  # グローバルに保存
+
+    # shuffle.html に結果を渡して表示
+    return render_template('shuffle.html', winners=winners)
+
+
+# ページ番号なしでアクセスした場合に1ページ目にリダイレクト
+@app.route('/confirm', methods=['POST', 'GET'])
+def confirm_redirect():
+    return redirect(url_for('confirm', page_num=1))  # page_numを指定してリダイレクト
+
+
+# ページ番号を指定して表示
+@app.route('/confirm/<int:page_num>', methods=['POST', 'GET'])
+def confirm(page_num=1):
+    global saved_winners
+
+    if request.method == 'POST':
+        confirmed_winners = []
+        prize_list = request.form.getlist('prize')
+        id_list = request.form.getlist('id')
+        comp_list = request.form.getlist('comp')
+        name_list = request.form.getlist('name')
+
+        for prize, id, comp, name in zip(prize_list, id_list, comp_list, name_list):
+            winner = {
+                "prize": prize,
+                "id": id,
+                "comp": comp,
+                "name": name
+            }
+            confirmed_winners.append(winner)
+
+        saved_winners.extend(confirmed_winners)
+
+    # 賞ごとに受賞者をグループ化
+    prizes = list(set([winner['prize'] for winner in saved_winners]))
+    prizes.sort()  # 賞のソート
+
+    # 1ページに表示する賞の数（賞ごとにページを分ける）
+    PER_PAGE = 1
+    total_pages = len(prizes)
+
+    # ページ数が範囲外の場合は404を返す
+    if page_num < 1 or page_num > total_pages:
+        return "Page not found", 404
+
+    # 現在のページの賞に対応する受賞者を抽出
+    current_prize = prizes[page_num - 1]
+    paginated_winners = [winner for winner in saved_winners if winner['prize'] == current_prize]
+
+    return render_template('confirm.html', winners=paginated_winners, current_prize=current_prize, page_num=page_num, total_pages=total_pages)
+
+
+
+# /guests ルート：ゲストリストを表示
+@app.route('/guests')
+def display_guests():
+    guests_df = pd.read_csv('sources/guests.csv')
+    return render_template('guests.html', guests=guests_df.to_dict(orient='records'))
+
+
+# /attend ルート：参加者リストを表示
+@app.route('/attend')
+def display_attendees():
+    guests_df = pd.read_csv('sources/guests.csv')
+    attend_df = pd.read_csv('sources/attend.csv')
+    attended_guests = guests_df[guests_df['id'].isin(attend_df['id'])]
+    return render_template('attend.html', guests=attended_guests.to_dict(orient='records'))
+
+
+# /prize ルート：賞リストを表示
+@app.route('/prize')
+def display_prizes():
+    prize_df = pd.read_csv('sources/prize.csv')
+    return render_template('prize.html', prizes=prize_df.to_dict(orient='records'))
+
+
+# Route for screen.html
+@app.route('/screen')
+def screen():
+    return render_template('screen.html')
+
+# サンプルのページリスト
+selectable_pages = ['/prize', '/attend', '/confirm/1', '/confirm/2', '/confirm/3']
+current_page = '/prize'
+
+
+@app.route('/screen_controller')
+def screen_controller():
+    return render_template('screen_controller.html', selectable_pages=selectable_pages, current_page=current_page)
+
+
+@app.route('/set_current_page', methods=['POST'])
+def set_current_page():
+    global current_page
+    page = request.json.get('page')
+    if page in selectable_pages:
+        current_page = page
+        return jsonify({'success': True, 'current_page': current_page})
+    else:
+        return jsonify({'success': False}), 400
+
+
+@app.route('/get_current_page', methods=['GET'])
+def get_current_page():
+    return jsonify({'current_page': current_page})
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
