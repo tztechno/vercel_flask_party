@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screen Controller</title>
+    <title>Selct Screen</title>
     <style>
         body {
             display: flex;
@@ -139,20 +139,6 @@
                 });
         }
 
-        // 定期的に現在のページを更新
-        ```
-        setInterval(function () {
-            axios.get('/get_current_page')
-                .then(function (response) {
-                    const currentPage = response.data.current_page;
-                    document.getElementById('currentPage').textContent = currentPage;
-                    document.getElementById('previewFrame').src = currentPage;
-                })
-                .catch(function (error) {
-                    console.error('Error:', error);
-                });
-        }, 5000); // 5秒ごとに更新
-        ```
     </script>
 </body>
 
