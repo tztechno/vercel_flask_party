@@ -34,7 +34,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/qr_read')
-def index():
+def qr_read():
     return render_template('qr_read.html')
 
 # /shuffle ルート：シャッフル結果を表示
