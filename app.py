@@ -122,7 +122,7 @@ current_page = '/prize'
 
 nickname_map = {
 '/prize':'賞品', 
-'/attend':'今日の参加者', 
+'/attend':'本日の参加者', 
 '/confirm?page_num=1':'Z1', 
 '/confirm?page_num=2':'Z2',
 '/confirm?page_num=3':'Z3'
