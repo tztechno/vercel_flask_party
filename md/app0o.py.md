@@ -1,18 +1,15 @@
-from flask import Flask, render_template, jsonify, redirect, url_for, send_from_directory, request, session
+from flask import Flask, render_template, jsonify
+from flask import redirect, url_for, send_from_directory
+from flask import request, session
 import csv
 import random
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # グローバル変数に受賞者データを保存
 saved_winners = []
-
-@app.route('/save-confirmation-time', methods=['POST'])
-def save_confirmation_time():
-    data = request.json
-    session['confirm_time'] = data['confirmTime']  # セッションに保存
-    return {'status': 'success'}
 
 # CSVファイルの読み込み
 def load_csv_files():
@@ -43,25 +40,30 @@ def index():
 def qr_read():
     return render_template('qr_read.html')
 
+# /shuffle ルート：シャッフル結果を表示
 @app.route('/shuffle')
 def shuffle():
-    global saved_winners
+    global saved_winners  # 既存の受賞者データをリセット
     saved_winners = []
 
+    # CSVファイルの読み込み
     prize_df, guests_df, attend_df = load_csv_files()
 
+    # 賞のリストを作成
     prizes = []
     for row in prize_df:
         prizes.extend([row['prize']] * int(row['n']))
 
+    # 参加者のIDリストをシャッフル
     attendid = [row['id'] for row in attend_df]
     random.shuffle(attendid)
 
-    winners = []
+    # シャッフル結果に基づいて受賞者を選出
     for i in range(len(prizes)):
         idi = attendid[i]
         attendee = next((row for row in guests_df if row['id'] == idi), None)
         
+        # 該当する参加者がいない場合はスキップ
         if attendee is None:
             continue
         
@@ -71,14 +73,13 @@ def shuffle():
             'comp': attendee['comp'],
             'name': attendee['name'],
         }
-        winners.append(winner)
-        saved_winners.append(winner)
+        saved_winners.append(winner)  # グローバルに保存
 
-    return render_template('shuffle.html', winners=winners)
+    # shuffle.html に結果を渡して表示
+    return render_template('shuffle.html', winners=saved_winners)
 
 @app.route('/confirm', methods=['POST', 'GET'])
-@app.route('/confirm/<int:page_num>', methods=['POST', 'GET'])
-def confirm(page_num=1):
+def confirm():
     global saved_winners
 
     if request.method == 'POST':
@@ -99,26 +100,39 @@ def confirm(page_num=1):
 
         saved_winners.extend(confirmed_winners)
 
-    prizes = list(set([winner['prize'] for winner in saved_winners]))
-    prizes.sort()
+        # 確定時刻をセッションに保存
+        session['confirm_time'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+    # 賞ごとに受賞者をグループ化
+    prizes = list(set([winner['prize'] for winner in saved_winners]))
+    prizes.sort()  # 賞のソート
+
+    # 1ページに表示する賞の数（賞ごとにページを分ける）
     PER_PAGE = 1
     total_pages = len(prizes)
 
+    # 現在のページ数を取得
+    page_num = request.args.get('page_num', default=1, type=int)
+
+    # ページ数が範囲外の場合は404を返す
     if page_num < 1 or page_num > total_pages:
         return "Page not found", 404
 
+    # 現在のページの賞に対応する受賞者を抽出
     current_prize = prizes[page_num - 1]
     paginated_winners = [winner for winner in saved_winners if winner['prize'] == current_prize]
 
     confirm_time = session.get('confirm_time', None)
+
     return render_template('confirm.html', winners=paginated_winners, current_prize=current_prize, page_num=page_num, total_pages=total_pages, confirm_time=confirm_time)
 
+# /guests ルート：ゲストリストを表示
 @app.route('/guests')
 def display_guests():
     guests_df = load_csv('sources/guests.csv')
     return render_template('guests.html', guests=guests_df)
 
+# /attend ルート：参加者リストを表示
 @app.route('/attend')
 def display_attendees():
     guests_df = load_csv('sources/guests.csv')
@@ -126,11 +140,13 @@ def display_attendees():
     attended_guests = [row for row in guests_df if row['id'] in [attendee['id'] for attendee in attend_df]]
     return render_template('attend.html', guests=attended_guests)
 
+# /prize ルート：賞リストを表示
 @app.route('/prize')
 def display_prizes():
     prize_df = load_csv('sources/prize.csv')
     return render_template('prize.html', prizes=prize_df)
 
+# Route for screen.html
 @app.route('/screen')
 def screen():
     return render_template('screen.html')

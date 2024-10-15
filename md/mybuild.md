@@ -6,19 +6,17 @@ http://127.0.0.1:5000
 
 http://127.0.0.1:5000/shuffle
 
-http://127.0.0.1:5000/confirm/1
+http://127.0.0.1:5000/confirm?page_num=1
 
-http://127.0.0.1:5000/confirm/2
+http://127.0.0.1:5000/confirm?page_num=2
 
-http://127.0.0.1:5000/confirm/3
+http://127.0.0.1:5000/confirm?page_num=3
 
 http://127.0.0.1:5000/guests
 
 http://127.0.0.1:5000/attend
 
 http://127.0.0.1:5000/prize
-
-http://127.0.0.1:5000/screen_controller
 
 http://127.0.0.1:5000/screen
 
