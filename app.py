@@ -33,6 +33,10 @@ def static_files(filename):
 def index():
     return render_template('index.html')
 
+@app.route('/qr_read')
+def index():
+    return render_template('qr_read.html')
+
 # /shuffle ルート：シャッフル結果を表示
 @app.route('/shuffle')
 def shuffle():
