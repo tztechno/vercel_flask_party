@@ -52,7 +52,21 @@
 
         getCurrentPage();
 
-        // 5秒ごとに現在のページを確認し、更新
+        let previousPage = ''; // 前回のページを保存するための変数
+
+        function getCurrentPage() {
+            // 現在のURLやページ情報を取得する。ここでは例としてwindow.location.hrefを使用。
+            const currentPage = window.location.href;
+
+            // 現在のページが前回のページと同じかどうかを確認
+            if (currentPage !== previousPage) {
+                // ページが変わった場合のみ、更新を行う
+                previousPage = currentPage;
+                window.location.reload(); // ページをリロードする
+            }
+        }
+
+        // 2秒ごとに現在のページを確認し、更新を必要に応じて行う
         setInterval(getCurrentPage, 2000);
 
         </script>
