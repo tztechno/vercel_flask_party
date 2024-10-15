@@ -30,3 +30,21 @@ git add .
 git commit -m "2024-10-15"
 git push -u origin master
 git push -f origin master
+
+
+your_project/
+│
+├── app.py                   # Flaskアプリケーションのメインファイル
+│
+├── sources/                 # データソースのディレクトリ
+│   ├── prize.csv
+│   ├── guests.csv
+│   └── attend.csv
+│
+├── templates/               # HTMLテンプレートのディレクトリ
+│   ├── index.html
+│   ├── shuffle.html
+│   └── ...                  # 他のテンプレート
+│
+└── static/                  # 静的ファイルのディレクトリ
+    └── sakura01.gif         # GIFファイル
