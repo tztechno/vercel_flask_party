@@ -163,8 +163,8 @@
         }
 
         function downloadResults() {
-            let header = "id"; // カラム名を追加
-            let text = scannedResults.map((result, index) => `${index + 1},${result}`).join('\n'); // idを各行に追加
+            let header = "id"; // カラム名として 'id' を追加
+            let text = scannedResults.join('\n'); // スキャン結果のみを追加
             text = header + '\n' + text; // カラム名とスキャン結果を結合
 
             const blob = new Blob([text], { type: 'text/plain' });
