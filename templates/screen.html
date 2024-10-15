@@ -69,8 +69,8 @@
 
         .preview-section {
             width: 100%;
-            max-width: 1200px;
-            margin-top: 30px;
+            max-width: 1300px;
+            margin-top: 10px;
         }
 
         #previewFrame {
@@ -106,16 +106,16 @@
 
 <body>
 <body>
+    <div class="preview-section">
+        <iframe id="previewFrame" src="{{ current_page }}"></iframe>
+    </div>
+
     <div class="grid">
         {% for page in selectable_pages %}
         <div class="card">
             <button onclick="setPage('{{ page }}')">{{ nickname_map[page] }}</button>
         </div>
         {% endfor %}
-    </div>
-
-    <div class="preview-section">
-        <iframe id="previewFrame" src="{{ current_page }}"></iframe>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
