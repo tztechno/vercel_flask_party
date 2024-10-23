@@ -10,28 +10,28 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
-
+    
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-
+    
         th,
         td {
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
         }
-
+    
         th {
             background-color: #f2f2f2;
         }
-
+    
         .filter-container {
             margin-bottom: 20px;
         }
-
+    
         .shuffle-link {
             margin-top: 20px;
             display: inline-block;
@@ -41,13 +41,12 @@
             text-decoration: none;
             border-radius: 5px;
         }
-
+    
         .shuffle-link:hover {
             background-color: #45a049;
         }
     </style>
     <script>
-        // 既存のスクリプト部分は省略...
 
         function downloadCSV() {
             const table = document.querySelector('table');
@@ -110,15 +109,15 @@
                     <td>{{ winner.id }}</td>
                     <td>{{ winner.comp }}</td>
                     <td>{{ winner.name }}</td>
-                    <td>
-                        <input type="hidden" name="prize_id" value="{{ winner.prize_id }}">
-                        <input type="hidden" name="id" value="{{ winner.id }}">
-                        <input type="hidden" name="comp" value="{{ winner.comp }}">
-                        <input type="hidden" name="name" value="{{ winner.name }}">
-                    </td>
+                    <!-- 隠しフィールドは <tr> 内に直接配置 -->
+                    <input type="hidden" name="prize_id" value="{{ winner.prize_id }}">
+                    <input type="hidden" name="id" value="{{ winner.id }}">
+                    <input type="hidden" name="comp" value="{{ winner.comp }}">
+                    <input type="hidden" name="name" value="{{ winner.name }}">
                 </tr>
                 {% endfor %}
             </tbody>
+
         </table>
     </form>
 

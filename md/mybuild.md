@@ -28,6 +28,8 @@ http://127.0.0.1:5000/prize
 
 http://127.0.0.1:5000/screen
 
+http://127.0.0.1:5000/winners
+
 
 git init
 git remote add origin https://github.com/tztechno/vercel_flask_party.git
