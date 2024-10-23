@@ -72,7 +72,7 @@
             let csvContent = '\uFEFF'; // BOMを追加
 
             // ヘッダー行
-            const headers = ["prize", "id", "comp", "name"];
+            const headers = ["prize_id", "id", "comp", "name"];
             csvContent += headers.map(header => `"${header}"`).join(',') + '\n';
 
             // データ行
@@ -82,7 +82,7 @@
                 const cells = row.querySelectorAll('td');
                 if (cells.length >= 4) { // hidden inputsの列を除外
                     const rowData = [
-                        cells[0].textContent, // prize
+                        cells[0].textContent, // prize_id
                         cells[1].textContent, // id
                         cells[2].textContent, // comp
                         cells[3].textContent  // name
@@ -113,7 +113,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>賞品</th>
+                    <th>賞品ID</th>
                     <th>ID</th>
                     <th>所属</th>
                     <th>氏名</th>
@@ -122,12 +122,12 @@
             <tbody>
                 {% for winner in winners %}
                 <tr>
-                    <td>{{ winner.prize }}</td>
+                    <td>{{ winner.prize_id }}</td>
                     <td>{{ winner.id }}</td>
                     <td>{{ winner.comp }}</td>
                     <td>{{ winner.name }}</td>
                     <td>
-                        <input type="hidden" name="prize" value="{{ winner.prize }}">
+                        <input type="hidden" name="prize_id" value="{{ winner.prize_id }}">
                         <input type="hidden" name="id" value="{{ winner.id }}">
                         <input type="hidden" name="comp" value="{{ winner.comp }}">
                         <input type="hidden" name="name" value="{{ winner.name }}">
@@ -140,12 +140,9 @@
 
     <!-- ボタン群 -->
     <div class="button-container">
-        <!-- Shuffleボタン -->
         <form action="/shuffle" method="get" style="display: inline;">
             <button type="submit" class="button">Shuffle</button>
         </form>
-
-        <!-- ダウンロードボタン -->
         <button onclick="downloadCSV()" class="button">結果をダウンロード</button>
     </div>
 
