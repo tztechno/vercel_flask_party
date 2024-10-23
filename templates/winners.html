@@ -104,38 +104,6 @@
             {% endfor %}
         </tbody>
     </table>
-        function downloadCSV() {
-            // テーブルの要素を取得
-            const table = document.getElementById('attendanceTable');
-            const rows = table.getElementsByTagName('tr');
-
-            // CSVのコンテンツを作成
-            let csvContent = '\uFEFF'; // BOMを追加してExcelで文字化けを防ぐ
-
-            // ヘッダー行を追加
-            const headers = Array.from(rows[0].getElementsByTagName('th'))
-                .map(header => `"${header.textContent}"`)
-                .join(',');
-            csvContent += headers + '\n';
-
-            // データ行を追加
-            for (let i = 1; i < rows.length; i++) {
-                const cells = rows[i].getElementsByTagName('td');
-                const rowData = Array.from(cells)
-                    .map(cell => `"${cell.textContent}"`)
-                    .join(',');
-                csvContent += rowData + '\n';
-            }
-
-            // CSVファイルを作成してダウンロード
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `today_attend.csv`;
-            link.click();
-            URL.revokeObjectURL(link.href);
-        }
-    </script>
 
 </body>
 

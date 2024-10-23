@@ -38,19 +38,18 @@ git push -u origin master
 git push -f origin master
 
 
-your_project/
+祝賀会_project/
 │
 ├── app.py                   # Flaskアプリケーションのメインファイル
 │
 ├── sources/                 # データソースのディレクトリ
-│   ├── prize.csv
-│   ├── guests.csv
-│   └── attend.csv
+│   ├── prize.csv            # あらかじめ作成しておく
+│   ├── guests.csv           # あらかじめ作成しておく
+│   ├── attend.csv           # 受付QRコード読み取り結果を出力したものを置く
+│   └── winners.csv          # 採用する受賞者リストを置く
 │
 ├── templates/               # HTMLテンプレートのディレクトリ
 │   ├── index.html
 │   ├── shuffle.html
 │   └── ...                  # 他のテンプレート
-│
-└── static/                  # 静的ファイルのディレクトリ
-    └── sakura01.gif         # GIFファイル
+
