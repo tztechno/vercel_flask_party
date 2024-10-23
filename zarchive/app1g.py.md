@@ -3,6 +3,7 @@ from flask import redirect, url_for, send_from_directory
 from flask import request, session 
 import csv
 import random
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -18,27 +19,22 @@ def load_csv_files():
         print(f"Error loading CSV files: {e}")
         return [], [], []  # 空のリストを返す
 
-
 def load_csv(file_path):
     with open(file_path, mode='r', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         return [row for row in reader]
 
-
 @app.route('/static/<path:filename>')
 def static_files(filename):
     return send_from_directory('static', filename)
-
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-
 @app.route('/qr_read')
 def qr_read():
     return render_template('qr_read.html')
-
 
 @app.route('/winners')
 def winners():
@@ -52,7 +48,6 @@ def winners():
 
     # テンプレートにデータを渡してレンダリング
     return render_template('winners.html', winners=winners_data)
-
 
 @app.route('/shuffle')
 def shuffle():
@@ -86,14 +81,8 @@ def shuffle():
 
     return render_template('shuffle.html', winners=saved_winners)
 
-def load_prizes():
-    prize_mapp = {}
-    with open('sources/prize.csv', newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for row in reader:
-            prize_mapp[row['prize_id']] = row['prize_name']  # prize_idをキー、prize_nameを値とする
-    return prize_mapp
 
+import csv
 
 def load_winners():
     winners = []
@@ -103,12 +92,10 @@ def load_winners():
             winners.append(row)
     return winners
 
-
 @app.route('/confirm', methods=['POST', 'GET'])
 def confirm():
     global saved_winners
     saved_winners = load_winners()  # 受賞者をCSVから読み込む
-    prize_mapp = load_prizes()  # 賞品データをCSVから読み込む
 
     if request.method == 'POST':
         return redirect(url_for('confirm', page_num=1))  # 受賞者を確認後、最初のページにリダイレクト
@@ -129,17 +116,14 @@ def confirm():
     current_prize = prizes[page_num - 1]
     paginated_winners = [winner for winner in saved_winners if winner['prize_id'] == current_prize]
 
-    # prize_mappを使ってprize_nameを取得
-    prize_name = prize_mapp.get(current_prize, "不明な賞")
+    confirm_time = session.get('confirm_time', None)
 
-    return render_template('confirm.html', winners=paginated_winners, current_prize=current_prize, prize_name=prize_name, page_num=page_num, total_pages=total_pages, prize_mapp=prize_mapp)
-
+    return render_template('confirm.html', winners=paginated_winners, current_prize=current_prize, page_num=page_num, total_pages=total_pages, confirm_time=confirm_time)
 
 @app.route('/guests')
 def display_guests():
     guests_df = load_csv('sources/guests.csv')
     return render_template('guests.html', guests=guests_df)
-
 
 @app.route('/attend')
 def display_attendees():
@@ -147,7 +131,6 @@ def display_attendees():
     attend_df = load_csv('sources/attend.csv')
     attended_guests = [row for row in guests_df if row['id'] in [attendee['id'] for attendee in attend_df]]
     return render_template('attend.html', guests=attended_guests)
-
 
 @app.route('/prize')
 def display_prizes():
@@ -166,11 +149,9 @@ nickname_map = {
 '/confirm?page_num=3':'Z3'
 }
 
-
 @app.route('/screen')
 def screen():
     return render_template('screen.html', selectable_pages=selectable_pages, current_page=current_page, nickname_map=nickname_map)
-
 
 @app.route('/set_current_page', methods=['POST'])
 def set_current_page():
@@ -182,11 +163,9 @@ def set_current_page():
     else:
         return jsonify({'success': False}), 400
 
-
 @app.route('/get_current_page', methods=['GET'])
 def get_current_page():
     return jsonify({'current_page': current_page})
-
 
 if __name__ == '__main__':
     app.run(debug=True)

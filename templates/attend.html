@@ -35,6 +35,7 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
             border-radius: 12px;
             overflow: hidden;
+            margin-bottom: 20px;
         }
 
         th,
@@ -65,6 +66,22 @@
             transition: background-color 0.3s ease;
         }
 
+        .download-btn {
+            padding: 12px 24px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .download-btn:hover {
+            background-color: #27ae60;
+        }
+
         @media (max-width: 600px) {
             table {
                 width: 95%;
@@ -84,7 +101,8 @@
 
 <body>
     <h1>本日の参加者</h1>
-    <table>
+    <button class="download-btn" onclick="downloadCSV()">CSVダウンロード</button>
+    <table id="attendanceTable">
         <thead>
             <tr>
                 <th>ID</th>
@@ -102,6 +120,41 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <script>
+        function downloadCSV() {
+            // テーブルの要素を取得
+            const table = document.getElementById('attendanceTable');
+            const rows = table.getElementsByTagName('tr');
+
+            // CSVのコンテンツを作成
+            let csvContent = '\uFEFF'; // BOMを追加してExcelで文字化けを防ぐ
+
+            // ヘッダー行を追加
+            const headers = Array.from(rows[0].getElementsByTagName('th'))
+                .map(header => `"${header.textContent}"`)
+                .join(',');
+            csvContent += headers + '\n';
+
+            // データ行を追加
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const rowData = Array.from(cells)
+                    .map(cell => `"${cell.textContent}"`)
+                    .join(',');
+                csvContent += rowData + '\n';
+            }
+
+            // CSVファイルを作成してダウンロード
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+
+            link.download = `today_attend.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+    </script>
 </body>
 
 </html>

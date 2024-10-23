@@ -87,14 +87,16 @@
     <table>
         <thead>
             <tr>
-                <th>賞品</th>
+                <th>賞品ID</th>
+                <th>賞品名</th>
                 <th>当選数</th>
             </tr>
         </thead>
         <tbody>
             {% for prize in prizes %}
             <tr>
-                <td>{{ prize.prize }}</td>
+                <td>{{ prize.prize_id }}</td>
+                <td>{{ prize.prize_name }}</td>
                 <td>{{ prize.n }}</td>
             </tr>
             {% endfor %}

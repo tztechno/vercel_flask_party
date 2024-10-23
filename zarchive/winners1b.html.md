@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>当選者</title>
+    <title>受賞者一覧</title>
     <style>
         body {
             display: flex;
@@ -17,7 +17,7 @@
             font-family: 'Helvetica Neue', Arial, sans-serif;
             color: #333;
         }
-    
+
         h1 {
             font-size: 36px;
             margin-bottom: 30px;
@@ -25,7 +25,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-    
+
         table {
             width: 80%;
             max-width: 800px;
@@ -36,13 +36,13 @@
             border-radius: 12px;
             overflow: hidden;
         }
-    
+
         th,
         td {
             padding: 18px 24px;
             text-align: left;
         }
-    
+
         th {
             background-color: #34495e;
             color: white;
@@ -50,31 +50,31 @@
             font-size: 18px;
             text-transform: uppercase;
         }
-    
+
         td {
             font-size: 16px;
             border-bottom: 1px solid #ecf0f1;
         }
-    
+
         tbody tr:last-child td {
             border-bottom: none;
         }
-    
+
         tbody tr:hover {
             background-color: #f8f9fa;
             transition: background-color 0.3s ease;
         }
-    
+
         @media (max-width: 600px) {
             table {
                 width: 95%;
             }
-    
+
             th,
             td {
                 padding: 12px 16px;
             }
-    
+
             h1 {
                 font-size: 28px;
             }
@@ -83,12 +83,11 @@
 </head>
 
 <body>
-    <h1>{{ prize_mapp[winners[0].prize_id] }} 受賞者</h1>
-
+    <h1>受賞者一覧</h1>
     <table>
         <thead>
             <tr>
-                <th>賞品ID</th>
+                <th>賞品名</th>
                 <th>ID</th>
                 <th>所属</th>
                 <th>氏名</th>
@@ -97,7 +96,7 @@
         <tbody>
             {% for winner in winners %}
             <tr>
-                <td>{{ winner.prize_id }}</td>
+                <td>{{ winner.prize }}</td>
                 <td>{{ winner.id }}</td>
                 <td>{{ winner.comp }}</td>
                 <td>{{ winner.name }}</td>
@@ -105,16 +104,6 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="pagination">
-        {% if page_num > 1 %}
-        <a href="{{ url_for('confirm', page_num=page_num-1) }}">前へ</a>
-        {% endif %}
-        {% if page_num < total_pages %} <a href="{{ url_for('confirm', page_num=page_num+1) }}">次へ</a>
-            {% endif %}
-    </div>
-
-
 </body>
 
 </html>

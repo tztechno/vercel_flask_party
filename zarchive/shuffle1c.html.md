@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Winners</title>
+    <title>抽選</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,6 +46,28 @@
         }
     </style>
     <script>
+        // shuffleページでの確定ボタン処理
+        document.getElementById('confirmShuffleButton').addEventListener('click', function () {
+            const now = new Date();
+            const formattedTime = now.toISOString(); // サーバーに送るためISOフォーマットに変換
+
+            // 確定時刻をサーバーに送信
+            fetch('/save-confirmation-time', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ confirmTime: formattedTime }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('サーバーに保存成功:', data);
+                })
+                .catch((error) => {
+                    console.error('エラー:', error);
+                });
+        });
+
         function populatePrizeFilter() {
             var rows = document.querySelectorAll('tbody tr');
             var prizes = new Set();
@@ -81,28 +103,38 @@
         window.onload = function () {
             populatePrizeFilter();
         };
+
+        // 保存処理を非同期で行いメッセージを表示
+        function saveWinners() {
+            fetch('/save_winners', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('saveMessage').innerText = data.message; // 成功メッセージ表示
+                })
+                .catch(error => {
+                    document.getElementById('saveMessage').innerText = '保存に失敗しました。'; // エラーメッセージ表示
+                });
+        }
     </script>
 </head>
 
 <body>
-    <h1>Winners</h1>
-
-    <div class="filter-container">
-        <label for="prize-filter">Filter by prize:</label>
-        <select id="prize-filter" onchange="filterWinners()">
-            <option value="">All</option>
-        </select>
-    </div>
+    <h1>抽選</h1>
 
     <!-- フォームの追加 -->
     <form method="POST" action="/confirm">
         <table>
             <thead>
                 <tr>
-                    <th>Prize</th>
+                    <th>賞品</th>
                     <th>ID</th>
-                    <th>Company</th>
-                    <th>Name</th>
+                    <th>所属</th>
+                    <th>氏名</th>
                 </tr>
             </thead>
             <tbody>
@@ -123,11 +155,16 @@
             </tbody>
         </table>
 
-        <!-- 確定ボタン -->
-        <button type="submit" class="shuffle-link">確定</button>
     </form>
 
-    <a href="/shuffle" class="shuffle-link">Shuffle</a>
+    <!-- Shuffleボタン -->
+    <form action="/shuffle" method="get">
+        <button type="submit">Shuffle</button>
+    </form>
+
+    <!-- 保存ボタン -->
+    <button onclick="saveWinners()">結果を保存</button>
+    <p id="saveMessage"></p> <!-- 保存メッセージ表示箇所 -->
 </body>
 
 </html>
