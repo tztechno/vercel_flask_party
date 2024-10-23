@@ -120,10 +120,12 @@
             let csvContent = '\uFEFF'; // BOMを追加してExcelで文字化けを防ぐ
 
             // ヘッダー行を追加
-            const headers = Array.from(rows[0].getElementsByTagName('th'))
-                .map(header => `"${header.textContent}"`)
-                .join(',');
-            csvContent += headers + '\n';
+            const headers = ["id", "comp", "name"];
+            csvContent += headers.map(header => `"${header}"`).join(',') + '\n';
+
+            // const headers = Array.from(rows[0].getElementsByTagName('th'))
+            //    .map(header => `"${header.textContent}"`)
+            //    .join(',');
 
             // データ行を追加
             for (let i = 1; i < rows.length; i++) {
