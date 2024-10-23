@@ -66,22 +66,6 @@
             transition: background-color 0.3s ease;
         }
 
-        .download-btn {
-            padding: 12px 24px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 20px;
-        }
-
-        .download-btn:hover {
-            background-color: #27ae60;
-        }
-
         @media (max-width: 600px) {
             table {
                 width: 95%;
@@ -101,7 +85,7 @@
 
 <body>
     <h1>本日の参加者</h1>
-    <button class="download-btn" onclick="downloadCSV()">CSVダウンロード</button>
+
     <table id="attendanceTable">
         <thead>
             <tr>
@@ -120,7 +104,7 @@
             {% endfor %}
         </tbody>
     </table>
-
+    <button onclick="downloadCSV()" class="button">ダウンロード</button>
     <script>
         function downloadCSV() {
             // テーブルの要素を取得
@@ -149,7 +133,6 @@
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-
             link.download = `today_attend.csv`;
             link.click();
             URL.revokeObjectURL(link.href);
