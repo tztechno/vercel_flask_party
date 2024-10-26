@@ -21,7 +21,7 @@ def load_csv_files():
 
 
 def load_csv(file_path):
-    with open(file_path, mode='r', encoding='utf-8-sig') as csvfile:
+    with open(file_path, mode='r', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         return [row for row in reader]
 
@@ -46,7 +46,7 @@ def winners():
     winners_data = []
 
     # CSVファイルを読み込む
-    with open('sources/winners.csv', encoding='utf-8-sig') as csvfile:
+    with open('sources/winners.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             winners_data.append(row)
@@ -65,6 +65,7 @@ def shuffle():
     prizes = []
     for row in prize_df:
         prizes.extend([row['prize_id']] * int(row['n']))
+    print(prizes)
 
     attendid = [row['id'] for row in attend_df]
     random.shuffle(attendid)
@@ -86,10 +87,9 @@ def shuffle():
 
     return render_template('shuffle.html', winners=saved_winners)
 
-
 def load_prizes():
     prize_mapp = {}
-    with open('sources/prize.csv', newline='', encoding='utf-8-sig') as csvfile:
+    with open('sources/prize.csv', newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             prize_mapp[row['prize_id']] = row['prize_name']  # prize_idをキー、prize_nameを値とする
@@ -98,12 +98,11 @@ def load_prizes():
 
 def load_winners():
     winners = []
-    with open('sources/winners.csv', newline='', encoding='utf-8-sig') as csvfile:
+    with open('sources/winners.csv', newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             winners.append(row)
     return winners
-
 
 
 @app.route('/confirm', methods=['POST', 'GET'])
@@ -117,7 +116,6 @@ def confirm():
 
     prizes = list(set([winner['prize_id'] for winner in saved_winners]))
     prizes.sort()  # 賞のソート
-    print(prizes)
 
     # 1ページに表示する賞の数（賞ごとにページを分ける）
     PER_PAGE = 1
@@ -136,7 +134,6 @@ def confirm():
     prize_name = prize_mapp.get(current_prize, "不明な賞")
 
     return render_template('confirm.html', winners=paginated_winners, current_prize=current_prize, prize_name=prize_name, page_num=page_num, total_pages=total_pages, prize_mapp=prize_mapp)
-
 
 
 @app.route('/guests')
@@ -159,7 +156,7 @@ def display_prizes():
     return render_template('prize.html', prizes=prize_df)
 
 # サンプルのページリスト
-selectable_pages = ['/prize', '/attend', '/confirm?page_num=1', '/confirm?page_num=2', '/confirm?page_num=3', '/confirm?page_num=4',]
+selectable_pages = ['/prize', '/attend', '/confirm?page_num=1', '/confirm?page_num=2', '/confirm?page_num=3']
 current_page = '/prize'
 
 nickname_map = {
@@ -167,9 +164,7 @@ nickname_map = {
 '/attend':'本日の参加者', 
 '/confirm?page_num=1':'Z1', 
 '/confirm?page_num=2':'Z2',
-'/confirm?page_num=3':'Z3',
-'/confirm?page_num=4':'Z4', 
-
+'/confirm?page_num=3':'Z3'
 }
 
 
@@ -195,11 +190,11 @@ def get_current_page():
 
 @app.route('/mp3_player')
 def mp3_player():
-    # static/mp3 フォルダにあるMP3ファイルを取得し、ソート
+    # static/mp3 フォルダにあるMP3ファイルを取得
     mp3_folder = os.path.join(app.static_folder, 'mp3')
-    mp3_files = sorted([f for f in os.listdir(mp3_folder) if f.endswith('.mp3')])
+    mp3_files = [f for f in os.listdir(mp3_folder) if f.endswith('.mp3')]
 
-    # ソート済みファイル名リストをHTMLテンプレートに渡す
+    # HTMLテンプレートにファイル名リストを渡す
     return render_template('mp3_player.html', mp3_files=mp3_files)
 
 

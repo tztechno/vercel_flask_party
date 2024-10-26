@@ -50,7 +50,7 @@ def winners():
         reader = csv.DictReader(csvfile)
         for row in reader:
             winners_data.append(row)
-
+    print(winners_data)
     # テンプレートにデータを渡してレンダリング
     return render_template('winners.html', winners=winners_data)
 
