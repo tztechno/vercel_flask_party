@@ -11,12 +11,12 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url("/static/gif/sakura01.gif");
+    background-image: url("/static/image/back3.jpg");
     /* GIF画像のパス */
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
-    opacity: 0.06;
+    opacity: 0.3;
     /* 透過率（0が完全透明、1が不透明） */
     z-index: -1;
     /* 背景として配置 */

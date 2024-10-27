@@ -35,7 +35,7 @@ git init
 git remote add origin https://github.com/tztechno/vercel_flask_party.git
 git pull origin master 
 git add .
-git commit -m "2024-10-27"
+git commit -m "2024-10-28"
 git push -u origin master
 git push -f origin master
 
