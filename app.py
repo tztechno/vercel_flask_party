@@ -159,7 +159,7 @@ def display_prizes():
     return render_template('prize.html', prizes=prize_df)
 
 # サンプルのページリスト
-selectable_pages = ['/prize', '/attend', '/confirm?page_num=1', '/confirm?page_num=2', '/confirm?page_num=3', '/confirm?page_num=4',]
+selectable_pages = ['/prize', '/attend', '/confirm?page_num=1', '/confirm?page_num=2', '/confirm?page_num=3', '/confirm?page_num=4','/confirm?page_num=5','/confirm?page_num=6',]
 current_page = '/prize'
 
 nickname_map = {
@@ -169,7 +169,8 @@ nickname_map = {
 '/confirm?page_num=2':'Z2',
 '/confirm?page_num=3':'Z3',
 '/confirm?page_num=4':'Z4', 
-
+'/confirm?page_num=5':'Z5',
+'/confirm?page_num=6':'Z6', 
 }
 
 
