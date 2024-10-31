@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='back.css') }}">
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0px;
+        }
+
+        #displayArea {
+            text-align: left;
+            margin: 80px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>&nbsp;アプリ等の説明</h1>
+
+    <!-- Markdownの内容をここに表示 -->
+    <div id="displayArea">
+        {{ content|safe }}
+    </div>
+</body>
+
+</html>

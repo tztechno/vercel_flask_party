@@ -1,13 +1,29 @@
 from flask import Flask, render_template, jsonify
 from flask import redirect, url_for, send_from_directory
-from flask import request, session 
+from flask import request 
+import markdown
 import csv
 import random
 import os
 
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 saved_winners = []
+
+
+@app.route('/manual')
+def show_markdown():
+    # Markdownファイルを読み込む
+    with open('md/manual.md', 'r', encoding='utf-8') as file:
+        md_content = file.read()
+    
+    # MarkdownをHTMLに変換
+    html_content = markdown.markdown(md_content)
+    
+    # HTMLとしてテンプレートに渡す
+    return render_template('manual.html', content=html_content)
+
 
 def load_csv_files():
     try:
@@ -35,6 +51,17 @@ def static_files(filename):
 def index():
     return render_template('index.html')
 
+@app.route('/inform1')
+def inform1():
+    return render_template('inform1.html')
+
+@app.route('/inform2')
+def inform2():
+    return render_template('inform2.html')
+
+@app.route('/floor')
+def floor():
+    return render_template('floor.html')
 
 @app.route('/qr_read')
 def qr_read():
@@ -159,7 +186,7 @@ def display_prizes():
     return render_template('prize.html', prizes=prize_df)
 
 # サンプルのページリスト
-selectable_pages = ['/prize', '/attend', '/confirm?page_num=1', '/confirm?page_num=2', '/confirm?page_num=3', '/confirm?page_num=4','/confirm?page_num=5','/confirm?page_num=6','/confirm?page_num=7','/confirm?page_num=8',]
+selectable_pages = ['/prize', '/attend', '/confirm?page_num=1', '/confirm?page_num=2', '/confirm?page_num=3', '/confirm?page_num=4','/confirm?page_num=5','/confirm?page_num=6','/confirm?page_num=7','/confirm?page_num=8','/inform1', '/inform2','/floor' ]
 current_page = '/prize'
 
 nickname_map = {
@@ -173,6 +200,9 @@ nickname_map = {
 '/confirm?page_num=6':'Z6', 
 '/confirm?page_num=7':'Z7',
 '/confirm?page_num=8':'Z8', 
+'/inform1':'info1', 
+'/inform2':'info2', 
+'/floor':'floor', 
 }
 
 
