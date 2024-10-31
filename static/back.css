@@ -1,20 +1,22 @@
+
 body {
-    position: relative;
     margin: 0;
     padding: 0;
 }
 
 body::before {
     content: "";
-    position: absolute;
+    position: fixed;
+    /* absolute から fixed に変更 */
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100%;
+    /* right: 0; の代わり */
+    height: 100%;
+    /* bottom: 0; の代わり */
     background-image: url("/static/image/back3.jpg");
     background-repeat: repeat-y;
     background-size: 100% auto;
-    /* 横は画面幅に合わせ、縦は自動 */
     background-position: top center;
     opacity: 0.4;
     z-index: -1;
