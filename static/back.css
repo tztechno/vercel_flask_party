@@ -12,15 +12,10 @@ body::before {
     right: 0;
     bottom: 0;
     background-image: url("/static/image/back3.jpg");
-    /* 背景画像のパス */
     background-repeat: repeat-y;
-    /* 縦方向のみにリピート */
-    background-size: 100% auto;
-    /* 横幅100%、縦方向は自動でサイズ調整 */
+    background-size: auto;
+    /* 重要な変更点 */
     background-position: top center;
-    /* 画像を上に合わせる */
     opacity: 0.4;
-    /* 透過率 */
     z-index: -1;
-    /* 背景として配置 */
 }
