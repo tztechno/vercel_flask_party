@@ -1,19 +1,20 @@
+html {
+    height: 100%;
+}
 
 body {
-    margin: 0;
-    padding: 0;
+    min-height: 100%;
+    position: relative;
 }
 
 body::before {
     content: "";
     position: fixed;
-    /* absolute から fixed に変更 */
+    /* 固定背景 */
     top: 0;
     left: 0;
     width: 100%;
-    /* right: 0; の代わり */
     height: 100%;
-    /* bottom: 0; の代わり */
     background-image: url("/static/image/back3.jpg");
     background-repeat: repeat-y;
     background-size: 100% auto;
